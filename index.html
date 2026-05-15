@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Europas Hauptstädte</title>
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --surface2:  #21262d;
+      --border:    #30363d;
+      --accent:    #58a6ff;
+      --accent2:   #79c0ff;
+      --green:     #3fb950;
+      --red:       #f85149;
+      --text:      #e6edf3;
+      --muted:     #8b949e;
+      --card-front:#1c2128;
+      --card-back: #0d1117;
+      --radius:    18px;
+      --shadow:    0 8px 32px rgba(0,0,0,.5);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px 16px;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -20%, #1a2b4a 0%, transparent 70%),
+        var(--bg);
+    }
+
+    /* ─── Screens ───────────────────────────────────────────────────────── */
+    .screen {
+      width: 100%;
+      max-width: 540px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      animation: fadeIn .35s ease;
+    }
+    .screen.active { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── Logo / Title ──────────────────────────────────────────────────── */
+    .logo {
+      text-align: center;
+    }
+    .logo .flag-row {
+      font-size: 2rem;
+      letter-spacing: .25rem;
+      margin-bottom: 12px;
+    }
+    .logo h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), #a371f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .logo p {
+      color: var(--muted);
+      font-size: .95rem;
+      margin-top: 6px;
+    }
+
+    /* ─── Mode Selector ─────────────────────────────────────────────────── */
+    .mode-label {
+      font-size: .8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+    }
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 100%;
+    }
+    .mode-btn {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 20px 8px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .2s;
+      font-size: .85rem;
+      font-weight: 500;
+      text-align: center;
+      line-height: 1.3;
+    }
+    .mode-btn .icon { font-size: 1.6rem; }
+    .mode-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: #161f2e;
+    }
+    .mode-btn.selected {
+      border-color: var(--accent);
+      background: #0d1f3c;
+      color: var(--accent2);
+      box-shadow: 0 0 0 3px rgba(88,166,255,.2);
+    }
+    .mode-btn .check {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .6rem;
+      color: var(--bg);
+      opacity: 0;
+      transition: opacity .15s;
+    }
+    .mode-btn.selected .check { opacity: 1; }
+
+    /* ─── Primary Button ────────────────────────────────────────────────── */
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, #1f6feb, #388bfd);
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s, opacity .15s;
+      box-shadow: 0 4px 20px rgba(31,111,235,.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(31,111,235,.45);
+    }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+    /* ─── Progress Bar ──────────────────────────────────────────────────── */
+    .progress-wrap {
+      width: 100%;
+    }
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .progress-info span {
+      font-size: .85rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .score-badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: .85rem;
+      color: var(--text);
+    }
+    .score-badge strong { color: var(--accent); }
+    .progress-bar {
+      height: 6px;
+      border-radius: 99px;
+      background: var(--surface2);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--accent), #a371f7);
+      transition: width .5s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ─── Flip Card ─────────────────────────────────────────────────────── */
+    .card-area {
+      width: 100%;
+      perspective: 1200px;
+    }
+    .card {
+      width: 100%;
+      aspect-ratio: 5 / 3.2;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform .55s cubic-bezier(.4,0,.2,1);
+      cursor: pointer;
+      border-radius: var(--radius);
+    }
+    .card.flipped { transform: rotateY(180deg); }
+
+    .card-face {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      gap: 10px;
+      text-align: center;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    /* Subtle grid pattern */
+    .card-face::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(88,166,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(88,166,255,.04) 1px, transparent 1px);
+      background-size: 28px 28px;
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    .card-front {
+      background: linear-gradient(145deg, #1c2433, #161b22);
+    }
+    .card-back {
+      background: linear-gradient(145deg, #0d1a2d, #0d1117);
+      transform: rotateY(180deg);
+    }
+
+    .card-label {
+      font-size: .7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 4px 12px;
+      z-index: 1;
+    }
+    .card-label.answer-label {
+      color: var(--accent);
+      border-color: rgba(88,166,255,.3);
+      background: rgba(88,166,255,.08);
+    }
+
+    .card-main {
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      font-weight: 700;
+      color: var(--text);
+      z-index: 1;
+      line-height: 1.2;
+    }
+    .card-back .card-main { color: var(--accent2); }
+
+    .card-hint {
+      font-size: .8rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 1;
+      margin-top: 4px;
+    }
+    .card-hint svg { flex-shrink: 0; }
+
+    /* Glow corners */
+    .card-front::after {
+      content: '';
+      position: absolute;
+      bottom: -40px;
+      right: -40px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(88,166,255,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .card-back::after {
+      content: '';
+      position: absolute;
+      top: -40px;
+      left: -40px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(163,113,247,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ─── Answer Buttons ────────────────────────────────────────────────── */
+    .answer-btns {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      animation: fadeIn .3s ease;
+    }
+    .answer-btns.hidden { display: none; }
+
+    .btn-wrong, .btn-correct {
+      padding: 15px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-wrong {
+      background: rgba(248,81,73,.15);
+      border: 1px solid rgba(248,81,73,.3);
+      color: var(--red);
+    }
+    .btn-wrong:hover {
+      background: rgba(248,81,73,.25);
+      transform: translateY(-2px);
+    }
+    .btn-correct {
+      background: rgba(63,185,80,.15);
+      border: 1px solid rgba(63,185,80,.3);
+      color: var(--green);
+    }
+    .btn-correct:hover {
+      background: rgba(63,185,80,.25);
+      transform: translateY(-2px);
+    }
+
+    /* ─── Result Screen ─────────────────────────────────────────────────── */
+    .result-card {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px 28px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .result-emoji { font-size: 3.5rem; margin-bottom: 12px; }
+    .result-card h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .result-card p { color: var(--muted); margin-bottom: 28px; }
+
+    .result-score {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 6px;
+      font-size: 4rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), #a371f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 4px;
+    }
+    .result-score-total {
+      font-size: 1.4rem;
+      color: var(--muted);
+      -webkit-text-fill-color: var(--muted);
+      font-weight: 600;
+    }
+    .result-pct {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface2);
+      color: var(--text);
+      font-size: .95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s, border-color .2s;
+    }
+    .btn-secondary:hover {
+      background: var(--surface);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════ START ══ -->
+<div class="screen active" id="screen-start">
+  <div class="logo">
+    <div class="flag-row">🇪🇺🗺️✨</div>
+    <h1>Europas Hauptstädte</h1>
+    <p>Teste dein Wissen über europäische Länder und ihre Hauptstädte.</p>
+  </div>
+
+  <span class="mode-label">Was soll vorne auf der Karte stehen?</span>
+
+  <div class="mode-grid">
+    <button class="mode-btn" data-mode="country" onclick="selectMode(this)">
+      <span class="check">✓</span>
+      <span class="icon">🌍</span>
+      <span>Land → Hauptstadt</span>
+    </button>
+    <button class="mode-btn" data-mode="capital" onclick="selectMode(this)">
+      <span class="check">✓</span>
+      <span class="icon">🏛️</span>
+      <span>Hauptstadt → Land</span>
+    </button>
+    <button class="mode-btn" data-mode="mixed" onclick="selectMode(this)">
+      <span class="check">✓</span>
+      <span class="icon">🔀</span>
+      <span>Gemischt</span>
+    </button>
+  </div>
+
+  <button class="btn-primary" id="start-btn" onclick="startGame()" disabled>
+    Spiel starten →
+  </button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ GAME ══ -->
+<div class="screen" id="screen-game">
+  <div class="progress-wrap">
+    <div class="progress-info">
+      <span id="progress-text">Karte 1 von 47</span>
+      <div class="score-badge">Punkte: <strong id="score-display">0</strong></div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="card-area" onclick="flipCard()">
+    <div class="card" id="flip-card">
+      <div class="card-face card-front">
+        <span class="card-label" id="front-label">Land</span>
+        <div class="card-main" id="front-text">–</div>
+        <div class="card-hint">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M7 16l-4-4 4-4M17 8l4 4-4 4M14 4l-4 16"/>
+          </svg>
+          Tippen zum Umdrehen
+        </div>
+      </div>
+      <div class="card-face card-back">
+        <span class="card-label answer-label" id="back-label">Hauptstadt</span>
+        <div class="card-main" id="back-text">–</div>
+        <div class="card-hint" style="opacity:.6">Wusstest du es?</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="answer-btns hidden" id="answer-btns">
+    <button class="btn-wrong" onclick="answer(false)">
+      ✗ &nbsp;Falsch gelegen
+    </button>
+    <button class="btn-correct" onclick="answer(true)">
+      ✓ &nbsp;Richtig gewusst
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════ END ══ -->
+<div class="screen" id="screen-result">
+  <div class="result-card">
+    <div class="result-emoji" id="result-emoji">🎉</div>
+    <h2 id="result-title">Gut gemacht!</h2>
+    <p id="result-subtitle">Hier ist dein Ergebnis:</p>
+    <div class="result-score">
+      <span id="result-score">0</span>
+      <span class="result-score-total" id="result-total">/ 47</span>
+    </div>
+    <div class="result-pct" id="result-pct">0 % richtig</div>
+  </div>
+  <button class="btn-primary" onclick="goToStart()">Nochmal spielen</button>
+  <button class="btn-secondary" onclick="replayWrong()" id="btn-replay-wrong">
+    Nur falsche Karten wiederholen
+  </button>
+</div>
+
+<script>
+  /* ─── Data ─────────────────────────────────────────────────────────── */
+  const PAIRS = [
+    ["Albanien","Tirana"],["Andorra","Andorra la Vella"],["Belgien","Brüssel"],
+    ["Bosnien und Herzegowina","Sarajevo"],["Bulgarien","Sofia"],["Dänemark","Kopenhagen"],
+    ["Deutschland","Berlin"],["Estland","Tallinn"],["Finnland","Helsinki"],
+    ["Frankreich","Paris"],["Griechenland","Athen"],["Irland","Dublin"],
+    ["Island","Reykjavik"],["Italien","Rom"],["Kosovo","Pristina"],
+    ["Kroatien","Zagreb"],["Lettland","Riga"],["Liechtenstein","Vaduz"],
+    ["Litauen","Vilnius"],["Luxemburg","Luxemburg"],["Malta","Valletta"],
+    ["Moldau","Chișinău"],["Monaco","Monaco"],["Montenegro","Podgorica"],
+    ["Niederlande","Amsterdam"],["Nordmazedonien","Skopje"],["Norwegen","Oslo"],
+    ["Österreich","Wien"],["Polen","Warschau"],["Portugal","Lissabon"],
+    ["Rumänien","Bukarest"],["Russland","Moskau"],["San Marino","San Marino"],
+    ["Schweden","Stockholm"],["Schweiz","Bern"],["Serbien","Belgrad"],
+    ["Slowakei","Bratislava"],["Slowenien","Ljubljana"],["Spanien","Madrid"],
+    ["Tschechien","Prag"],["Türkei","Ankara"],["Ukraine","Kiew"],
+    ["Ungarn","Budapest"],["Vatikanstadt","Vatikanstadt"],["Weißrussland","Minsk"],
+    ["Vereinigtes Königreich","London"],["Zypern","Nikosia"],
+  ];
+
+  /* ─── State ─────────────────────────────────────────────────────────── */
+  let deck = [];
+  let current = 0;
+  let score = 0;
+  let wrongCards = [];
+  let mode = null;
+
+  /* ─── Helpers ───────────────────────────────────────────────────────── */
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  /* ─── Mode Selection ─────────────────────────────────────────────────── */
+  function selectMode(btn) {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    mode = btn.dataset.mode;
+    document.getElementById('start-btn').disabled = false;
+  }
+
+  /* ─── Build Deck ─────────────────────────────────────────────────────── */
+  function buildDeck(pairs) {
+    return shuffle(pairs).map(([country, capital]) => {
+      let front, back, frontLabel, backLabel;
+      if (mode === 'country') {
+        front = country; back = capital;
+        frontLabel = 'Land'; backLabel = 'Hauptstadt';
+      } else if (mode === 'capital') {
+        front = capital; back = country;
+        frontLabel = 'Hauptstadt'; backLabel = 'Land';
+      } else {
+        // mixed: randomly decide for each card
+        const flip = Math.random() < .5;
+        front = flip ? capital : country;
+        back  = flip ? country : capital;
+        frontLabel = flip ? 'Hauptstadt' : 'Land';
+        backLabel  = flip ? 'Land' : 'Hauptstadt';
+      }
+      return { front, back, frontLabel, backLabel };
+    });
+  }
+
+  /* ─── Start Game ─────────────────────────────────────────────────────── */
+  function startGame(pairs) {
+    deck = buildDeck(pairs || PAIRS);
+    current = 0;
+    score = 0;
+    wrongCards = [];
+    showScreen('screen-game');
+    renderCard();
+  }
+
+  /* ─── Render Card ────────────────────────────────────────────────────── */
+  function renderCard() {
+    const card = deck[current];
+    const total = deck.length;
+
+    document.getElementById('progress-text').textContent =
+      `Karte ${current + 1} von ${total}`;
+    document.getElementById('score-display').textContent = score;
+    document.getElementById('progress-fill').style.width =
+      `${(current / total) * 100}%`;
+
+    document.getElementById('front-label').textContent  = card.frontLabel;
+    document.getElementById('front-text').textContent   = card.front;
+    document.getElementById('back-label').textContent   = card.backLabel;
+    document.getElementById('back-text').textContent    = card.back;
+
+    // Reset flip
+    const flipEl = document.getElementById('flip-card');
+    flipEl.classList.remove('flipped');
+    document.getElementById('answer-btns').classList.add('hidden');
+  }
+
+  /* ─── Flip Card ──────────────────────────────────────────────────────── */
+  function flipCard() {
+    const flipEl = document.getElementById('flip-card');
+    if (flipEl.classList.contains('flipped')) return; // already flipped
+    flipEl.classList.add('flipped');
+    setTimeout(() => {
+      document.getElementById('answer-btns').classList.remove('hidden');
+    }, 300);
+  }
+
+  /* ─── Answer ─────────────────────────────────────────────────────────── */
+  function answer(correct) {
+    if (correct) {
+      score++;
+    } else {
+      wrongCards.push(deck[current]);
+    }
+    current++;
+    if (current < deck.length) {
+      renderCard();
+    } else {
+      showResult();
+    }
+  }
+
+  /* ─── Show Result ────────────────────────────────────────────────────── */
+  function showResult() {
+    const total = deck.length;
+    const pct = Math.round((score / total) * 100);
+
+    let emoji, title;
+    if (pct === 100) { emoji = '🏆'; title = 'Perfekt! Unglaublich!'; }
+    else if (pct >= 80) { emoji = '🎉'; title = 'Sehr gut gemacht!'; }
+    else if (pct >= 60) { emoji = '👍'; title = 'Gut gemacht!'; }
+    else if (pct >= 40) { emoji = '📚'; title = 'Noch etwas üben!'; }
+    else                { emoji = '💪'; title = 'Weitermachen!'; }
+
+    document.getElementById('result-emoji').textContent    = emoji;
+    document.getElementById('result-title').textContent    = title;
+    document.getElementById('result-score').textContent    = score;
+    document.getElementById('result-total').textContent    = `/ ${total}`;
+    document.getElementById('result-pct').textContent      = `${pct} % richtig`;
+
+    const btnWrong = document.getElementById('btn-replay-wrong');
+    btnWrong.style.display = wrongCards.length > 0 ? 'block' : 'none';
+
+    showScreen('screen-result');
+  }
+
+  /* ─── Navigation ─────────────────────────────────────────────────────── */
+  function goToStart() {
+    showScreen('screen-start');
+  }
+
+  function replayWrong() {
+    const wrong = [...wrongCards];
+    score = 0;
+    wrongCards = [];
+    deck = shuffle(wrong);
+    current = 0;
+    showScreen('screen-game');
+    renderCard();
+  }
+</script>
+</body>
+</html>
