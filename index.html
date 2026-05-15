@@ -3,473 +3,319 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Europas Hauptstädte</title>
+  <title>Welthauptstädte Quiz</title>
   <style>
-    /* ─── Reset & Base ─────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:        #0d1117;
-      --surface:   #161b22;
-      --surface2:  #21262d;
-      --border:    #30363d;
-      --accent:    #58a6ff;
-      --accent2:   #79c0ff;
-      --green:     #3fb950;
-      --red:       #f85149;
-      --text:      #e6edf3;
-      --muted:     #8b949e;
-      --card-front:#1c2128;
-      --card-back: #0d1117;
-      --radius:    18px;
-      --shadow:    0 8px 32px rgba(0,0,0,.5);
+      --bg: #0d1117; --surface: #161b22; --surface2: #21262d;
+      --border: #30363d; --accent: #58a6ff; --accent2: #79c0ff;
+      --green: #3fb950; --red: #f85149; --text: #e6edf3;
+      --muted: #8b949e; --radius: 18px; --shadow: 0 8px 32px rgba(0,0,0,.5);
     }
-
-    html, body {
-      height: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
-    }
-
+    html { height: 100%; }
     body {
+      min-height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: radial-gradient(ellipse 80% 60% at 50% -20%, #1a2b4a 0%, transparent 70%), #0d1117;
+      color: var(--text);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 24px 16px;
-      background:
-        radial-gradient(ellipse 80% 60% at 50% -20%, #1a2b4a 0%, transparent 70%),
-        var(--bg);
+      padding: 28px 16px;
     }
+    body::before, body::after { content: ''; flex: 1 0 0; }
 
-    /* ─── Screens ───────────────────────────────────────────────────────── */
     .screen {
-      width: 100%;
-      max-width: 540px;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 24px;
+      width: 100%; max-width: 520px;
+      display: none; flex-direction: column;
+      align-items: center; gap: 18px;
       animation: fadeIn .35s ease;
     }
     .screen.active { display: flex; }
-
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(16px); }
+      from { opacity: 0; transform: translateY(12px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ─── Logo / Title ──────────────────────────────────────────────────── */
-    .logo {
-      text-align: center;
-    }
-    .logo .flag-row {
-      font-size: 2rem;
-      letter-spacing: .25rem;
-      margin-bottom: 12px;
-    }
+    /* Logo */
+    .logo { text-align: center; }
+    .logo .flag-row { font-size: 1.9rem; letter-spacing: .2rem; margin-bottom: 8px; }
     .logo h1 {
-      font-size: 2rem;
-      font-weight: 700;
+      font-size: 1.75rem; font-weight: 700;
       background: linear-gradient(135deg, var(--accent), #a371f7);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    .logo p {
-      color: var(--muted);
-      font-size: .95rem;
-      margin-top: 6px;
+    .logo p { color: var(--muted); font-size: .88rem; margin-top: 4px; }
+
+    /* Section */
+    .section { width: 100%; display: flex; flex-direction: column; gap: 9px; }
+    .section-label {
+      font-size: .7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .12em; color: var(--muted);
     }
 
-    /* ─── Mode Selector ─────────────────────────────────────────────────── */
-    .mode-label {
-      font-size: .8rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .1em;
-      color: var(--muted);
+    /* All-toggle */
+    .btn-all-toggle {
+      width: 100%; padding: 9px 13px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      background: var(--surface); color: var(--muted);
+      font-size: .83rem; font-weight: 500; cursor: pointer;
+      text-align: left; display: flex; align-items: center; gap: 8px;
+      transition: all .18s;
     }
-    .mode-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      width: 100%;
+    .btn-all-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-all-toggle.all-selected {
+      border-color: var(--accent); background: #0d1f3c; color: var(--accent2);
     }
+
+    /* Continent grid */
+    .continent-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+    .continent-btn {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 4px; padding: 10px 5px;
+      border: 1.5px solid var(--border); border-radius: 11px;
+      background: var(--surface); color: var(--muted);
+      cursor: pointer; font-size: .75rem; font-weight: 500;
+      text-align: center; transition: all .15s; line-height: 1.25;
+    }
+    .continent-btn .ci { font-size: 1.25rem; }
+    .continent-btn .cc { font-size: .65rem; color: var(--muted); margin-top: 1px; }
+    .continent-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .continent-btn.selected {
+      border-color: var(--accent); background: #0d1f3c; color: var(--accent2);
+      box-shadow: 0 0 0 2px rgba(88,166,255,.15);
+    }
+    .continent-btn.selected .cc { color: var(--accent); opacity: .65; }
+
+    /* Mode grid */
+    .mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
     .mode-btn {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      padding: 20px 8px;
-      border: 2px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--surface);
-      color: var(--muted);
-      cursor: pointer;
-      transition: all .2s;
-      font-size: .85rem;
-      font-weight: 500;
-      text-align: center;
-      line-height: 1.3;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 5px; padding: 12px 5px;
+      border: 1.5px solid var(--border); border-radius: 11px;
+      background: var(--surface); color: var(--muted);
+      cursor: pointer; font-size: .76rem; font-weight: 500;
+      text-align: center; transition: all .15s; line-height: 1.3;
     }
-    .mode-btn .icon { font-size: 1.6rem; }
-    .mode-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: #161f2e;
-    }
+    .mode-btn .mi { font-size: 1.3rem; }
+    .mode-btn:hover { border-color: var(--accent); color: var(--accent); }
     .mode-btn.selected {
-      border-color: var(--accent);
-      background: #0d1f3c;
-      color: var(--accent2);
-      box-shadow: 0 0 0 3px rgba(88,166,255,.2);
+      border-color: var(--accent); background: #0d1f3c; color: var(--accent2);
+      box-shadow: 0 0 0 2px rgba(88,166,255,.15);
     }
-    .mode-btn .check {
-      position: absolute;
-      top: 8px;
-      right: 10px;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: .6rem;
-      color: var(--bg);
-      opacity: 0;
-      transition: opacity .15s;
-    }
-    .mode-btn.selected .check { opacity: 1; }
 
-    /* ─── Primary Button ────────────────────────────────────────────────── */
+    /* Count row */
+    .count-row { display: flex; gap: 7px; }
+    .count-btn {
+      flex: 1; padding: 9px 3px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      background: var(--surface); color: var(--muted);
+      cursor: pointer; font-size: .84rem; font-weight: 600;
+      transition: all .15s;
+    }
+    .count-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .count-btn.selected {
+      border-color: var(--accent); background: #0d1f3c; color: var(--accent2);
+      box-shadow: 0 0 0 2px rgba(88,166,255,.15);
+    }
+
+    /* Info bar */
+    .info-bar {
+      width: 100%; padding: 9px 13px;
+      background: var(--surface); border: 1px solid var(--surface2);
+      border-radius: 10px; font-size: .8rem; color: var(--muted); text-align: center;
+    }
+    .info-bar strong { color: var(--accent); }
+
+    /* Primary button */
     .btn-primary {
-      width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: var(--radius);
+      width: 100%; padding: 14px;
+      border: none; border-radius: var(--radius);
       background: linear-gradient(135deg, #1f6feb, #388bfd);
-      color: #fff;
-      font-size: 1.05rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform .15s, box-shadow .15s, opacity .15s;
-      box-shadow: 0 4px 20px rgba(31,111,235,.35);
+      color: #fff; font-size: .98rem; font-weight: 600;
+      cursor: pointer; transition: transform .15s, box-shadow .15s, opacity .15s;
+      box-shadow: 0 4px 20px rgba(31,111,235,.3);
     }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(31,111,235,.45);
-    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(31,111,235,.4); }
     .btn-primary:active { transform: translateY(0); }
-    .btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+    .btn-primary:disabled { opacity: .35; cursor: not-allowed; transform: none; box-shadow: none; }
 
-    /* ─── Progress Bar ──────────────────────────────────────────────────── */
-    .progress-wrap {
-      width: 100%;
-    }
-    .progress-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .progress-info span {
-      font-size: .85rem;
-      color: var(--muted);
-      font-weight: 500;
-    }
+    /* Progress */
+    .progress-wrap { width: 100%; }
+    .progress-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+    .progress-info span { font-size: .8rem; color: var(--muted); font-weight: 500; }
     .score-badge {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 4px 12px;
-      font-size: .85rem;
-      color: var(--text);
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 3px 11px; font-size: .8rem;
     }
     .score-badge strong { color: var(--accent); }
-    .progress-bar {
-      height: 6px;
-      border-radius: 99px;
-      background: var(--surface2);
-      overflow: hidden;
-    }
+    .progress-bar { height: 5px; border-radius: 99px; background: var(--surface2); overflow: hidden; }
     .progress-fill {
-      height: 100%;
-      border-radius: 99px;
+      height: 100%; border-radius: 99px;
       background: linear-gradient(90deg, var(--accent), #a371f7);
       transition: width .5s cubic-bezier(.4,0,.2,1);
     }
 
-    /* ─── Flip Card ─────────────────────────────────────────────────────── */
-    .card-area {
-      width: 100%;
-      perspective: 1200px;
-    }
+    /* Flip card */
+    .card-area { width: 100%; perspective: 1200px; }
     .card {
-      width: 100%;
-      aspect-ratio: 5 / 3.2;
-      position: relative;
-      transform-style: preserve-3d;
+      width: 100%; aspect-ratio: 5 / 3.2;
+      position: relative; transform-style: preserve-3d;
       transition: transform .55s cubic-bezier(.4,0,.2,1);
-      cursor: pointer;
-      border-radius: var(--radius);
+      cursor: pointer; border-radius: var(--radius);
     }
     .card.flipped { transform: rotateY(180deg); }
-
     .card-face {
-      position: absolute;
-      inset: 0;
-      border-radius: var(--radius);
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 28px;
-      gap: 10px;
-      text-align: center;
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      overflow: hidden;
+      position: absolute; inset: 0; border-radius: var(--radius);
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 22px; gap: 8px;
+      text-align: center; border: 1px solid var(--border);
+      box-shadow: var(--shadow); overflow: hidden;
     }
-
-    /* Subtle grid pattern */
     .card-face::before {
-      content: '';
-      position: absolute;
-      inset: 0;
+      content: ''; position: absolute; inset: 0;
       background-image:
         linear-gradient(rgba(88,166,255,.04) 1px, transparent 1px),
         linear-gradient(90deg, rgba(88,166,255,.04) 1px, transparent 1px);
-      background-size: 28px 28px;
-      border-radius: inherit;
-      pointer-events: none;
+      background-size: 28px 28px; border-radius: inherit; pointer-events: none;
     }
-
-    .card-front {
-      background: linear-gradient(145deg, #1c2433, #161b22);
-    }
-    .card-back {
-      background: linear-gradient(145deg, #0d1a2d, #0d1117);
-      transform: rotateY(180deg);
-    }
-
+    .card-front { background: linear-gradient(145deg, #1c2433, #161b22); }
+    .card-back  { background: linear-gradient(145deg, #0d1a2d, #0d1117); transform: rotateY(180deg); }
     .card-label {
-      font-size: .7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      color: var(--muted);
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 99px;
-      padding: 4px 12px;
-      z-index: 1;
+      font-size: .65rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .12em;
+      color: var(--muted); background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 99px;
+      padding: 3px 10px; z-index: 1;
     }
     .card-label.answer-label {
-      color: var(--accent);
-      border-color: rgba(88,166,255,.3);
+      color: var(--accent); border-color: rgba(88,166,255,.3);
       background: rgba(88,166,255,.08);
     }
-
     .card-main {
-      font-size: clamp(1.6rem, 5vw, 2.4rem);
-      font-weight: 700;
-      color: var(--text);
-      z-index: 1;
-      line-height: 1.2;
+      font-size: clamp(1.35rem, 5vw, 2.1rem); font-weight: 700;
+      color: var(--text); z-index: 1; line-height: 1.2;
     }
     .card-back .card-main { color: var(--accent2); }
-
     .card-hint {
-      font-size: .8rem;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      z-index: 1;
-      margin-top: 4px;
+      font-size: .73rem; color: var(--muted);
+      display: flex; align-items: center; gap: 5px;
+      z-index: 1; margin-top: 2px;
     }
-    .card-hint svg { flex-shrink: 0; }
-
-    /* Glow corners */
     .card-front::after {
-      content: '';
-      position: absolute;
-      bottom: -40px;
-      right: -40px;
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(88,166,255,.12) 0%, transparent 70%);
+      content: ''; position: absolute; bottom: -40px; right: -40px;
+      width: 110px; height: 110px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(88,166,255,.1) 0%, transparent 70%);
       pointer-events: none;
     }
     .card-back::after {
-      content: '';
-      position: absolute;
-      top: -40px;
-      left: -40px;
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(163,113,247,.12) 0%, transparent 70%);
+      content: ''; position: absolute; top: -40px; left: -40px;
+      width: 110px; height: 110px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(163,113,247,.1) 0%, transparent 70%);
       pointer-events: none;
     }
 
-    /* ─── Answer Buttons ────────────────────────────────────────────────── */
+    /* Answer buttons */
     .answer-btns {
-      width: 100%;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      animation: fadeIn .3s ease;
+      width: 100%; display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; animation: fadeIn .3s ease;
     }
     .answer-btns.hidden { display: none; }
-
     .btn-wrong, .btn-correct {
-      padding: 15px;
-      border: none;
-      border-radius: var(--radius);
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform .15s, box-shadow .15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      padding: 13px; border: none; border-radius: var(--radius);
+      font-size: .93rem; font-weight: 600; cursor: pointer;
+      transition: transform .15s; display: flex;
+      align-items: center; justify-content: center; gap: 7px;
     }
-    .btn-wrong {
-      background: rgba(248,81,73,.15);
-      border: 1px solid rgba(248,81,73,.3);
-      color: var(--red);
-    }
-    .btn-wrong:hover {
-      background: rgba(248,81,73,.25);
-      transform: translateY(-2px);
-    }
-    .btn-correct {
-      background: rgba(63,185,80,.15);
-      border: 1px solid rgba(63,185,80,.3);
-      color: var(--green);
-    }
-    .btn-correct:hover {
-      background: rgba(63,185,80,.25);
-      transform: translateY(-2px);
-    }
+    .btn-wrong  { background: rgba(248,81,73,.15); border: 1px solid rgba(248,81,73,.3); color: var(--red); }
+    .btn-wrong:hover  { background: rgba(248,81,73,.25); transform: translateY(-2px); }
+    .btn-correct { background: rgba(63,185,80,.15); border: 1px solid rgba(63,185,80,.3); color: var(--green); }
+    .btn-correct:hover { background: rgba(63,185,80,.25); transform: translateY(-2px); }
 
-    /* ─── Result Screen ─────────────────────────────────────────────────── */
+    /* Result */
     .result-card {
-      width: 100%;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 40px 28px;
-      text-align: center;
-      box-shadow: var(--shadow);
+      width: 100%; background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 34px 22px; text-align: center; box-shadow: var(--shadow);
     }
-    .result-emoji { font-size: 3.5rem; margin-bottom: 12px; }
-    .result-card h2 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .result-card p { color: var(--muted); margin-bottom: 28px; }
-
+    .result-emoji { font-size: 2.8rem; margin-bottom: 9px; }
+    .result-card h2 { font-size: 1.45rem; font-weight: 700; margin-bottom: 5px; }
+    .result-card p { color: var(--muted); margin-bottom: 22px; }
     .result-score {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 6px;
-      font-size: 4rem;
-      font-weight: 800;
+      display: inline-flex; align-items: baseline; gap: 5px;
+      font-size: 3.3rem; font-weight: 800;
       background: linear-gradient(135deg, var(--accent), #a371f7);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 4px;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; margin-bottom: 2px;
     }
     .result-score-total {
-      font-size: 1.4rem;
-      color: var(--muted);
-      -webkit-text-fill-color: var(--muted);
-      font-weight: 600;
+      font-size: 1.2rem; color: var(--muted);
+      -webkit-text-fill-color: var(--muted); font-weight: 600;
     }
-    .result-pct {
-      font-size: 1rem;
-      color: var(--muted);
-      margin-bottom: 32px;
-    }
-
+    .result-pct { font-size: .88rem; color: var(--muted); margin-bottom: 26px; }
     .btn-secondary {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--surface2);
-      color: var(--text);
-      font-size: .95rem;
-      font-weight: 600;
-      cursor: pointer;
+      width: 100%; padding: 12px;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      background: var(--surface2); color: var(--text);
+      font-size: .88rem; font-weight: 600; cursor: pointer;
       transition: background .2s, border-color .2s;
     }
-    .btn-secondary:hover {
-      background: var(--surface);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
+    .btn-secondary:hover { background: var(--surface); border-color: var(--accent); color: var(--accent); }
   </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════════ START ══ -->
+<!-- ══════════════════════════════════════ START ══ -->
 <div class="screen active" id="screen-start">
   <div class="logo">
-    <div class="flag-row">🇪🇺🗺️✨</div>
-    <h1>Europas Hauptstädte</h1>
-    <p>Teste dein Wissen über europäische Länder und ihre Hauptstädte.</p>
+    <div class="flag-row">🌍🌎🌏</div>
+    <h1>Welthauptstädte Quiz</h1>
+    <p>Teste dein Wissen über Länder und ihre Hauptstädte.</p>
   </div>
 
-  <span class="mode-label">Was soll vorne auf der Karte stehen?</span>
-
-  <div class="mode-grid">
-    <button class="mode-btn" data-mode="country" onclick="selectMode(this)">
-      <span class="check">✓</span>
-      <span class="icon">🌍</span>
-      <span>Land → Hauptstadt</span>
+  <div class="section">
+    <span class="section-label">Kontinente</span>
+    <button class="btn-all-toggle" id="btn-all-toggle" onclick="toggleAllContinents()">
+      <span>🌐</span>
+      <span id="all-toggle-label">Alle Kontinente auswählen</span>
     </button>
-    <button class="mode-btn" data-mode="capital" onclick="selectMode(this)">
-      <span class="check">✓</span>
-      <span class="icon">🏛️</span>
-      <span>Hauptstadt → Land</span>
-    </button>
-    <button class="mode-btn" data-mode="mixed" onclick="selectMode(this)">
-      <span class="check">✓</span>
-      <span class="icon">🔀</span>
-      <span>Gemischt</span>
-    </button>
+    <div class="continent-grid" id="continent-grid"></div>
   </div>
 
-  <button class="btn-primary" id="start-btn" onclick="startGame()" disabled>
-    Spiel starten →
-  </button>
+  <div class="section">
+    <span class="section-label">Spielmodus</span>
+    <div class="mode-grid">
+      <button class="mode-btn" data-mode="country" onclick="selectMode(this)">
+        <span class="mi">🌍</span><span>Land →<br>Hauptstadt</span>
+      </button>
+      <button class="mode-btn" data-mode="capital" onclick="selectMode(this)">
+        <span class="mi">🏛️</span><span>Hauptstadt →<br>Land</span>
+      </button>
+      <button class="mode-btn" data-mode="mixed" onclick="selectMode(this)">
+        <span class="mi">🔀</span><span>Gemischt</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="section">
+    <span class="section-label">Anzahl der Karten</span>
+    <div class="count-row" id="count-row"></div>
+  </div>
+
+  <div class="info-bar" id="info-bar">Wähle mindestens einen Kontinent und einen Spielmodus</div>
+  <button class="btn-primary" id="start-btn" onclick="startGame()" disabled>Spiel starten →</button>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════ GAME ══ -->
+<!-- ══════════════════════════════════════ GAME ══ -->
 <div class="screen" id="screen-game">
   <div class="progress-wrap">
     <div class="progress-info">
-      <span id="progress-text">Karte 1 von 47</span>
+      <span id="progress-text">Karte 1 von 20</span>
       <div class="score-badge">Punkte: <strong id="score-display">0</strong></div>
     </div>
-    <div class="progress-bar">
-      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
   </div>
 
   <div class="card-area" onclick="flipCard()">
@@ -478,7 +324,7 @@
         <span class="card-label" id="front-label">Land</span>
         <div class="card-main" id="front-text">–</div>
         <div class="card-hint">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path d="M7 16l-4-4 4-4M17 8l4 4-4 4M14 4l-4 16"/>
           </svg>
           Tippen zum Umdrehen
@@ -493,16 +339,12 @@
   </div>
 
   <div class="answer-btns hidden" id="answer-btns">
-    <button class="btn-wrong" onclick="answer(false)">
-      ✗ &nbsp;Falsch gelegen
-    </button>
-    <button class="btn-correct" onclick="answer(true)">
-      ✓ &nbsp;Richtig gewusst
-    </button>
+    <button class="btn-wrong"   onclick="answer(false)">✗ &nbsp;Falsch gelegen</button>
+    <button class="btn-correct" onclick="answer(true)">✓ &nbsp;Richtig gewusst</button>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════════════════ END ══ -->
+<!-- ═══════════════════════════════════════ END ══ -->
 <div class="screen" id="screen-result">
   <div class="result-card">
     <div class="result-emoji" id="result-emoji">🎉</div>
@@ -510,19 +352,20 @@
     <p id="result-subtitle">Hier ist dein Ergebnis:</p>
     <div class="result-score">
       <span id="result-score">0</span>
-      <span class="result-score-total" id="result-total">/ 47</span>
+      <span class="result-score-total" id="result-total">/ 20</span>
     </div>
     <div class="result-pct" id="result-pct">0 % richtig</div>
   </div>
   <button class="btn-primary" onclick="goToStart()">Nochmal spielen</button>
-  <button class="btn-secondary" onclick="replayWrong()" id="btn-replay-wrong">
+  <button class="btn-secondary" id="btn-replay-wrong" onclick="replayWrong()">
     Nur falsche Karten wiederholen
   </button>
 </div>
 
 <script>
-  /* ─── Data ─────────────────────────────────────────────────────────── */
-  const PAIRS = [
+/* ─── Data ─────────────────────────────────────────────────────────── */
+const DATA = {
+  europa: [
     ["Albanien","Tirana"],["Andorra","Andorra la Vella"],["Belgien","Brüssel"],
     ["Bosnien und Herzegowina","Sarajevo"],["Bulgarien","Sofia"],["Dänemark","Kopenhagen"],
     ["Deutschland","Berlin"],["Estland","Tallinn"],["Finnland","Helsinki"],
@@ -539,158 +382,285 @@
     ["Tschechien","Prag"],["Türkei","Ankara"],["Ukraine","Kiew"],
     ["Ungarn","Budapest"],["Vatikanstadt","Vatikanstadt"],["Weißrussland","Minsk"],
     ["Vereinigtes Königreich","London"],["Zypern","Nikosia"],
-  ];
+  ],
+  afrika: [
+    ["Ägypten","Kairo"],["Äthiopien","Addis Abeba"],["Algerien","Algier"],
+    ["Angola","Luanda"],["Äquatorialguinea","Malabo"],["Benin","Porto-Novo"],
+    ["Botswana","Gaborone"],["Burkina Faso","Ouagadougou"],["Burundi","Gitega"],
+    ["Dschibuti","Dschibuti"],["Elfenbeinküste","Yamoussoukro"],["Eritrea","Asmara"],
+    ["Eswatini","Mbabane"],["Gabun","Libreville"],["Gambia","Banjul"],
+    ["Ghana","Accra"],["Guinea","Conakry"],["Guinea-Bissau","Bissau"],
+    ["Kamerun","Jaunde"],["Kap Verde","Praia"],["Kenia","Nairobi"],
+    ["Komoren","Moroni"],["Kongo (Dem. Rep.)","Kinshasa"],["Kongo (Rep.)","Brazzaville"],
+    ["Lesotho","Maseru"],["Liberia","Monrovia"],["Libyen","Tripolis"],
+    ["Madagaskar","Antananarivo"],["Malawi","Lilongwe"],["Mali","Bamako"],
+    ["Marokko","Rabat"],["Mauretanien","Nouakchott"],["Mauritius","Port Louis"],
+    ["Mosambik","Maputo"],["Namibia","Windhoek"],["Niger","Niamey"],
+    ["Nigeria","Abuja"],["Ruanda","Kigali"],["São Tomé und Príncipe","São Tomé"],
+    ["Sambia","Lusaka"],["Senegal","Dakar"],["Seychellen","Victoria"],
+    ["Sierra Leone","Freetown"],["Simbabwe","Harare"],["Somalia","Mogadischu"],
+    ["Südafrika","Pretoria"],["Sudan","Khartum"],["Südsudan","Juba"],
+    ["Tansania","Dodoma"],["Togo","Lomé"],["Tschad","N'Djamena"],
+    ["Tunesien","Tunis"],["Uganda","Kampala"],["Zentralafrikanische Republik","Bangui"],
+  ],
+  asien: [
+    ["Afghanistan","Kabul"],["Armenien","Jerewan"],["Aserbaidschan","Baku"],
+    ["Bahrain","Manama"],["Bangladesch","Dhaka"],["Bhutan","Thimphu"],
+    ["Brunei","Bandar Seri Begawan"],["China","Peking"],["Georgien","Tiflis"],
+    ["Indien","Neu-Delhi"],["Indonesien","Jakarta"],["Irak","Bagdad"],
+    ["Iran","Teheran"],["Israel","Jerusalem"],["Japan","Tokio"],
+    ["Jemen","Sanaa"],["Jordanien","Amman"],["Kambodscha","Phnom Penh"],
+    ["Kasachstan","Astana"],["Katar","Doha"],["Kirgisistan","Bischkek"],
+    ["Kuwait","Kuwait-Stadt"],["Laos","Vientiane"],["Libanon","Beirut"],
+    ["Malaysia","Kuala Lumpur"],["Malediven","Malé"],["Mongolei","Ulaanbaatar"],
+    ["Myanmar","Naypyidaw"],["Nepal","Kathmandu"],["Nordkorea","Pjöngjang"],
+    ["Oman","Maskat"],["Pakistan","Islamabad"],["Philippinen","Manila"],
+    ["Saudi-Arabien","Riad"],["Singapur","Singapur"],["Sri Lanka","Sri Jayawardenepura Kotte"],
+    ["Südkorea","Seoul"],["Syrien","Damaskus"],["Tadschikistan","Duschanbe"],
+    ["Thailand","Bangkok"],["Timor-Leste","Dili"],["Turkmenistan","Aschgabat"],
+    ["Usbekistan","Taschkent"],["Vereinigte Arabische Emirate","Abu Dhabi"],["Vietnam","Hanoi"],
+  ],
+  nordamerika: [
+    ["Antigua und Barbuda","Saint John's"],["Bahamas","Nassau"],["Barbados","Bridgetown"],
+    ["Belize","Belmopan"],["Costa Rica","San José"],["Dominica","Roseau"],
+    ["Dominikanische Republik","Santo Domingo"],["El Salvador","San Salvador"],
+    ["Grenada","Saint George's"],["Guatemala","Guatemala-Stadt"],["Haiti","Port-au-Prince"],
+    ["Honduras","Tegucigalpa"],["Jamaika","Kingston"],["Kanada","Ottawa"],
+    ["Kuba","Havanna"],["Mexiko","Mexiko-Stadt"],["Nicaragua","Managua"],
+    ["Panama","Panama-Stadt"],["Saint Kitts und Nevis","Basseterre"],
+    ["Saint Lucia","Castries"],["Saint Vincent und die Grenadinen","Kingstown"],
+    ["Trinidad und Tobago","Port of Spain"],["Vereinigte Staaten","Washington, D.C."],
+  ],
+  suedamerika: [
+    ["Argentinien","Buenos Aires"],["Bolivien","Sucre"],["Brasilien","Brasília"],
+    ["Chile","Santiago"],["Ecuador","Quito"],["Guyana","Georgetown"],
+    ["Kolumbien","Bogotá"],["Paraguay","Asunción"],["Peru","Lima"],
+    ["Suriname","Paramaribo"],["Uruguay","Montevideo"],["Venezuela","Caracas"],
+  ],
+  ozeanien: [
+    ["Australien","Canberra"],["Fidschi","Suva"],["Kiribati","Süd-Tarawa"],
+    ["Marshallinseln","Majuro"],["Mikronesien","Palikir"],["Nauru","Yaren"],
+    ["Neuseeland","Wellington"],["Palau","Ngerulmud"],["Papua-Neuguinea","Port Moresby"],
+    ["Salomonen","Honiara"],["Samoa","Apia"],["Tonga","Nukuʻalofa"],
+    ["Tuvalu","Funafuti"],["Vanuatu","Port Vila"],
+  ],
+};
 
-  /* ─── State ─────────────────────────────────────────────────────────── */
-  let deck = [];
-  let current = 0;
-  let score = 0;
-  let wrongCards = [];
-  let mode = null;
+const CONTINENTS = [
+  { id: 'europa',      label: 'Europa',      emoji: '🇪🇺' },
+  { id: 'afrika',      label: 'Afrika',      emoji: '🌍' },
+  { id: 'asien',       label: 'Asien',       emoji: '🌏' },
+  { id: 'nordamerika', label: 'Nordamerika', emoji: '🌎' },
+  { id: 'suedamerika', label: 'Südamerika',  emoji: '🌎' },
+  { id: 'ozeanien',    label: 'Ozeanien',    emoji: '🌊' },
+];
 
-  /* ─── Helpers ───────────────────────────────────────────────────────── */
-  function shuffle(arr) {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
+const COUNT_OPTIONS = [10, 20, 30, 50, 'all'];
+
+/* ─── State ─────────────────────────────────────────────────────────── */
+let selectedContinents = new Set();
+let mode = null;
+let cardCount = 20;
+let deck = [], current = 0, score = 0, wrongCards = [];
+
+/* ─── Init ───────────────────────────────────────────────────────────── */
+(function init() {
+  const grid = document.getElementById('continent-grid');
+  CONTINENTS.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'continent-btn';
+    btn.dataset.id = c.id;
+    btn.innerHTML = `<span class="ci">${c.emoji}</span><span>${c.label}</span><span class="cc">${DATA[c.id].length} Länder</span>`;
+    btn.onclick = () => toggleContinent(c.id);
+    grid.appendChild(btn);
+  });
+
+  const row = document.getElementById('count-row');
+  COUNT_OPTIONS.forEach(v => {
+    const btn = document.createElement('button');
+    btn.className = 'count-btn' + (v === cardCount ? ' selected' : '');
+    btn.dataset.value = v;
+    btn.textContent = v === 'all' ? 'Alle' : v;
+    btn.onclick = () => selectCount(v);
+    row.appendChild(btn);
+  });
+
+  updateInfo();
+})();
+
+/* ─── Continent ──────────────────────────────────────────────────────── */
+function toggleContinent(id) {
+  selectedContinents.has(id) ? selectedContinents.delete(id) : selectedContinents.add(id);
+  syncContinentUI();
+  updateInfo();
+}
+
+function toggleAllContinents() {
+  if (selectedContinents.size === CONTINENTS.length) selectedContinents.clear();
+  else CONTINENTS.forEach(c => selectedContinents.add(c.id));
+  syncContinentUI();
+  updateInfo();
+}
+
+function syncContinentUI() {
+  document.querySelectorAll('.continent-btn').forEach(btn => {
+    btn.classList.toggle('selected', selectedContinents.has(btn.dataset.id));
+  });
+  const all = selectedContinents.size === CONTINENTS.length;
+  document.getElementById('btn-all-toggle').classList.toggle('all-selected', all);
+  document.getElementById('all-toggle-label').textContent =
+    all ? 'Alle Kontinente ausgewählt ✓' : 'Alle Kontinente auswählen';
+}
+
+/* ─── Mode ───────────────────────────────────────────────────────────── */
+function selectMode(btn) {
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  mode = btn.dataset.mode;
+  updateInfo();
+}
+
+/* ─── Count ──────────────────────────────────────────────────────────── */
+function selectCount(v) {
+  cardCount = v;
+  document.querySelectorAll('.count-btn').forEach(btn => {
+    btn.classList.toggle('selected', String(btn.dataset.value) === String(v));
+  });
+  updateInfo();
+}
+
+/* ─── Info ───────────────────────────────────────────────────────────── */
+function getAvailable() {
+  let n = 0;
+  selectedContinents.forEach(id => { n += DATA[id].length; });
+  return n;
+}
+
+function getActual() {
+  const av = getAvailable();
+  return (cardCount === 'all' || cardCount >= av) ? av : cardCount;
+}
+
+function updateInfo() {
+  const av = getAvailable(), actual = getActual();
+  const bar = document.getElementById('info-bar');
+  document.getElementById('start-btn').disabled = !(selectedContinents.size > 0 && mode);
+
+  if (av === 0) {
+    bar.innerHTML = 'Wähle mindestens einen Kontinent und einen Spielmodus';
+    return;
   }
+  const cardTxt = actual === av
+    ? `<strong>Alle ${av}</strong> Karten`
+    : `<strong>${actual}</strong> von ${av} Karten`;
+  const sel = CONTINENTS.filter(c => selectedContinents.has(c.id));
+  const contTxt = sel.length === CONTINENTS.length
+    ? 'der ganzen Welt'
+    : sel.length === 1
+      ? `aus <strong>${sel[0].label}</strong>`
+      : `aus ${sel.length} Kontinenten`;
+  bar.innerHTML = `${cardTxt} ${contTxt} werden gespielt`;
+}
 
-  function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+/* ─── Helpers ────────────────────────────────────────────────────────── */
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
+  return a;
+}
 
-  /* ─── Mode Selection ─────────────────────────────────────────────────── */
-  function selectMode(btn) {
-    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    mode = btn.dataset.mode;
-    document.getElementById('start-btn').disabled = false;
-  }
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
 
-  /* ─── Build Deck ─────────────────────────────────────────────────────── */
-  function buildDeck(pairs) {
-    return shuffle(pairs).map(([country, capital]) => {
-      let front, back, frontLabel, backLabel;
-      if (mode === 'country') {
-        front = country; back = capital;
-        frontLabel = 'Land'; backLabel = 'Hauptstadt';
-      } else if (mode === 'capital') {
-        front = capital; back = country;
-        frontLabel = 'Hauptstadt'; backLabel = 'Land';
-      } else {
-        // mixed: randomly decide for each card
-        const flip = Math.random() < .5;
-        front = flip ? capital : country;
-        back  = flip ? country : capital;
-        frontLabel = flip ? 'Hauptstadt' : 'Land';
-        backLabel  = flip ? 'Land' : 'Hauptstadt';
-      }
-      return { front, back, frontLabel, backLabel };
-    });
-  }
-
-  /* ─── Start Game ─────────────────────────────────────────────────────── */
-  function startGame(pairs) {
-    deck = buildDeck(pairs || PAIRS);
-    current = 0;
-    score = 0;
-    wrongCards = [];
-    showScreen('screen-game');
-    renderCard();
-  }
-
-  /* ─── Render Card ────────────────────────────────────────────────────── */
-  function renderCard() {
-    const card = deck[current];
-    const total = deck.length;
-
-    document.getElementById('progress-text').textContent =
-      `Karte ${current + 1} von ${total}`;
-    document.getElementById('score-display').textContent = score;
-    document.getElementById('progress-fill').style.width =
-      `${(current / total) * 100}%`;
-
-    document.getElementById('front-label').textContent  = card.frontLabel;
-    document.getElementById('front-text').textContent   = card.front;
-    document.getElementById('back-label').textContent   = card.backLabel;
-    document.getElementById('back-text').textContent    = card.back;
-
-    // Reset flip instantly (no reverse animation → back face stays hidden)
-    const flipEl = document.getElementById('flip-card');
-    flipEl.style.transition = 'none';
-    flipEl.classList.remove('flipped');
-    flipEl.offsetHeight; // force reflow so the transition:none takes effect
-    flipEl.style.transition = '';
-    document.getElementById('answer-btns').classList.add('hidden');
-  }
-
-  /* ─── Flip Card ──────────────────────────────────────────────────────── */
-  function flipCard() {
-    const flipEl = document.getElementById('flip-card');
-    if (flipEl.classList.contains('flipped')) return; // already flipped
-    flipEl.classList.add('flipped');
-    setTimeout(() => {
-      document.getElementById('answer-btns').classList.remove('hidden');
-    }, 300);
-  }
-
-  /* ─── Answer ─────────────────────────────────────────────────────────── */
-  function answer(correct) {
-    if (correct) {
-      score++;
+/* ─── Build Deck ─────────────────────────────────────────────────────── */
+function buildDeck(pairs) {
+  const n = cardCount === 'all' ? pairs.length : Math.min(cardCount, pairs.length);
+  return shuffle(pairs).slice(0, n).map(([country, capital]) => {
+    let front, back, frontLabel, backLabel;
+    if (mode === 'country') {
+      front = country; back = capital; frontLabel = 'Land'; backLabel = 'Hauptstadt';
+    } else if (mode === 'capital') {
+      front = capital; back = country; frontLabel = 'Hauptstadt'; backLabel = 'Land';
     } else {
-      wrongCards.push(deck[current]);
+      const flip = Math.random() < .5;
+      front = flip ? capital : country; back = flip ? country : capital;
+      frontLabel = flip ? 'Hauptstadt' : 'Land'; backLabel = flip ? 'Land' : 'Hauptstadt';
     }
-    current++;
-    if (current < deck.length) {
-      renderCard();
-    } else {
-      showResult();
-    }
-  }
+    return { front, back, frontLabel, backLabel };
+  });
+}
 
-  /* ─── Show Result ────────────────────────────────────────────────────── */
-  function showResult() {
-    const total = deck.length;
-    const pct = Math.round((score / total) * 100);
+/* ─── Game Flow ──────────────────────────────────────────────────────── */
+function startGame() {
+  let pairs = [];
+  selectedContinents.forEach(id => { pairs = pairs.concat(DATA[id]); });
+  deck = buildDeck(pairs);
+  current = 0; score = 0; wrongCards = [];
+  showScreen('screen-game');
+  renderCard();
+}
 
-    let emoji, title;
-    if (pct === 100) { emoji = '🏆'; title = 'Perfekt! Unglaublich!'; }
-    else if (pct >= 80) { emoji = '🎉'; title = 'Sehr gut gemacht!'; }
-    else if (pct >= 60) { emoji = '👍'; title = 'Gut gemacht!'; }
-    else if (pct >= 40) { emoji = '📚'; title = 'Noch etwas üben!'; }
-    else                { emoji = '💪'; title = 'Weitermachen!'; }
+function renderCard() {
+  const c = deck[current], total = deck.length;
+  document.getElementById('progress-text').textContent = `Karte ${current + 1} von ${total}`;
+  document.getElementById('score-display').textContent = score;
+  document.getElementById('progress-fill').style.width = `${(current / total) * 100}%`;
+  document.getElementById('front-label').textContent = c.frontLabel;
+  document.getElementById('front-text').textContent  = c.front;
+  document.getElementById('back-label').textContent  = c.backLabel;
+  document.getElementById('back-text').textContent   = c.back;
 
-    document.getElementById('result-emoji').textContent    = emoji;
-    document.getElementById('result-title').textContent    = title;
-    document.getElementById('result-score').textContent    = score;
-    document.getElementById('result-total').textContent    = `/ ${total}`;
-    document.getElementById('result-pct').textContent      = `${pct} % richtig`;
+  const flipEl = document.getElementById('flip-card');
+  flipEl.style.transition = 'none';
+  flipEl.classList.remove('flipped');
+  flipEl.offsetHeight;
+  flipEl.style.transition = '';
+  document.getElementById('answer-btns').classList.add('hidden');
+}
 
-    const btnWrong = document.getElementById('btn-replay-wrong');
-    btnWrong.style.display = wrongCards.length > 0 ? 'block' : 'none';
+function flipCard() {
+  const flipEl = document.getElementById('flip-card');
+  if (flipEl.classList.contains('flipped')) return;
+  flipEl.classList.add('flipped');
+  setTimeout(() => document.getElementById('answer-btns').classList.remove('hidden'), 300);
+}
 
-    showScreen('screen-result');
-  }
+function answer(correct) {
+  if (correct) score++; else wrongCards.push(deck[current]);
+  current++;
+  if (current < deck.length) renderCard(); else showResult();
+}
 
-  /* ─── Navigation ─────────────────────────────────────────────────────── */
-  function goToStart() {
-    showScreen('screen-start');
-  }
+function showResult() {
+  const total = deck.length, pct = Math.round((score / total) * 100);
+  let emoji, title;
+  if (pct === 100)     { emoji = '🏆'; title = 'Perfekt! Unglaublich!'; }
+  else if (pct >= 80)  { emoji = '🎉'; title = 'Sehr gut gemacht!'; }
+  else if (pct >= 60)  { emoji = '👍'; title = 'Gut gemacht!'; }
+  else if (pct >= 40)  { emoji = '📚'; title = 'Noch etwas üben!'; }
+  else                 { emoji = '💪'; title = 'Weitermachen!'; }
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-score').textContent = score;
+  document.getElementById('result-total').textContent = `/ ${total}`;
+  document.getElementById('result-pct').textContent   = `${pct} % richtig`;
+  document.getElementById('btn-replay-wrong').style.display = wrongCards.length > 0 ? 'block' : 'none';
+  showScreen('screen-result');
+}
 
-  function replayWrong() {
-    const wrong = [...wrongCards];
-    score = 0;
-    wrongCards = [];
-    deck = shuffle(wrong);
-    current = 0;
-    showScreen('screen-game');
-    renderCard();
-  }
+function goToStart() { showScreen('screen-start'); }
+
+function replayWrong() {
+  deck = shuffle([...wrongCards]);
+  wrongCards = []; score = 0; current = 0;
+  showScreen('screen-game');
+  renderCard();
+}
 </script>
 </body>
 </html>
