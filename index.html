@@ -619,9 +619,12 @@
     document.getElementById('back-label').textContent   = card.backLabel;
     document.getElementById('back-text').textContent    = card.back;
 
-    // Reset flip
+    // Reset flip instantly (no reverse animation → back face stays hidden)
     const flipEl = document.getElementById('flip-card');
+    flipEl.style.transition = 'none';
     flipEl.classList.remove('flipped');
+    flipEl.offsetHeight; // force reflow so the transition:none takes effect
+    flipEl.style.transition = '';
     document.getElementById('answer-btns').classList.add('hidden');
   }
 
